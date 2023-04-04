@@ -24,7 +24,7 @@ class jknotepad:
         self.scrollbar = tk.Scrollbar(master)
         self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
-        self.textarea = tk.Text(master, undo=True, yscrollcommand=self.scrollbar.set, font=("Arial", 14), bg="#dbdbdb" ) #fg="#fff", insertbackground="#fff")
+        self.textarea = tk.Text(master, undo=True, yscrollcommand=self.scrollbar.set, font=("Arial", 14), fg="black", insertbackground="black", bg="#dbdbdb") #(master, undo=True, yscrollcommand=self.scrollbar.set, font=("Arial", 14), bg="#272727", fg="#fff", insertbackground="#fff")
         self.textarea.pack(expand=True, fill='both')
         self.scrollbar.config(command=self.textarea.yview)
         self.filename = None
@@ -64,7 +64,6 @@ class jknotepad:
         self.viewmenu.add_command(label="Reset Zoom", command=self.reset_zoom)
         
 
-        
         master.config(menu=self.menubar)
 
         popup_width = 320
@@ -72,7 +71,6 @@ class jknotepad:
         
         xp = (monitor_width / 2) - (popup_width / 2)
         yp = (monitor_hight / 2) - (popup_hight / 2) - 300
-
         
         self.search_popup = tk.Toplevel(self.master)
         self.search_popup.withdraw()
@@ -102,22 +100,30 @@ class jknotepad:
         
     base_font_size = 14
     zoom_factor = 0
+    #print(zoom_factor)
 
     def zoom_in(self, event=None):
-        #global zoom_factor
-        #zoom_factor =+ 0.1
-        self.textarea.config(font=("Arial", 48))#int(self.base_font_size * zoom_factor)))
+        self.zoom_factor += 0.9
+        #print("factor", self.zoom_factor)
+        zoom = int(self.base_font_size * self.zoom_factor)
+        #print("zoom", zoom)
+        self.textarea.config(font=("Arial", zoom))#int(self.base_font_size * zoom_factor))) 
 
     def zoom_out(self, event=None):
-        #global zoom_factor
-        #zoom_factor =- 0.1
-        self.textarea.config(font=("Arial", 10))#int(self.base_font_size * zoom_factor)))
+        self.zoom_factor -= 0.3
+        #print("factor", self.zoom_factor)
+        if self.zoom_factor < 0:
+            zoom = 5
+            #print("zoom", zoom)
+        else:
+            zoom = int(self.base_font_size * self.zoom_factor)
+            #print("zoom", zoom)
+            
+        self.textarea.config(font=("Arial", zoom))#int(self.base_font_size * zoom_factor)))
 
     def reset_zoom(self):
+        self.zoom_factor = 0.9
         self.textarea.config(font=("Arial", self.base_font_size)) 
-
-
-    
 
     def show_search_popup(self):
         self.search_popup.deiconify()
@@ -169,8 +175,8 @@ class jknotepad:
     #            idx = idx
     #
     #       text_widget.tag_config("search", background="yellow")
-
-        self.search_entry.focus_set()
+    #
+    #    self.search_entry.focus_set()
 
     def on_closing(self):
         if self.is_saved():
@@ -205,13 +211,11 @@ class jknotepad:
                 else:
                     return False
     
-
     def new_file(self):
         if self.is_saved():
             self.filename = None
             self.master.title("Untitled - Notepad")
             self.textarea.delete(1.0, tk.END)
-
 
     def open_file(self):
         if self.is_saved():
