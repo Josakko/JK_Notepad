@@ -2,7 +2,7 @@
 Notepad app made in python using tkinter
 
 ## Usage
-Download installer [here](https://www.mediafire.com/file/2pkwaxzb65wop2z/JK_NotepadSetupFile.exe/file).
+Download installer [here](https://www.mediafire.com/file/fw7odyv8svsac1h/JK_NotepadSetupFile.exe/file).
 
 ## Need Help?
 If you need help contact me on my [discord server](https://discord.gg/xgET5epJE6).
