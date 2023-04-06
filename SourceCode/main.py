@@ -3,7 +3,7 @@ from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import filedialog
 
-class jknotepad:
+class JK_Notepad:
     def __init__(self, master):
         self.master = master
         self.master.protocol("WM_DELETE_WINDOW", self.on_closing)
@@ -21,12 +21,18 @@ class jknotepad:
         master.title("Untitled - JK Notepad")
         master.iconbitmap("JK.ico")
         
-        self.scrollbar = tk.Scrollbar(master)
-        self.scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
+        self.y_scrollbar = tk.Scrollbar(master)
+        self.y_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
         
-        self.textarea = tk.Text(master, undo=True, yscrollcommand=self.scrollbar.set, font=("Arial", 14), fg="black", insertbackground="black", bg="#dbdbdb") #(master, undo=True, yscrollcommand=self.scrollbar.set, font=("Arial", 14), bg="#272727", fg="#fff", insertbackground="#fff")
+        self.x_scrollbar = tk.Scrollbar(master, orient=tk.HORIZONTAL)
+        self.x_scrollbar.pack(side=tk.BOTTOM, fill=tk.X)
+        
+        self.textarea = tk.Text(master, undo=True, wrap=tk.NONE, yscrollcommand=self.y_scrollbar.set, xscrollcommand=self.x_scrollbar.set, font=("Arial", 14), fg="black", insertbackground="black", bg="#dbdbdb") #(master, undo=True, yscrollcommand=self.scrollbar.set, font=("Arial", 14), bg="#272727", fg="#fff", insertbackground="#fff")
         self.textarea.pack(expand=True, fill='both')
-        self.scrollbar.config(command=self.textarea.yview)
+        
+        self.y_scrollbar.config(command=self.textarea.yview)
+        self.x_scrollbar.config(command=self.textarea.xview)
+        
         self.filename = None
         
         self.menubar = tk.Menu(master)
@@ -184,19 +190,26 @@ class jknotepad:
     
     def is_saved(self):
         if self.filename is not None:
-            with open(self.filename) as f:
-                if self.textarea.get(1.0, tk.END) == f.read():
-                    return True
-                else:
-                    answer = messagebox.askyesnocancel(title="Notepad", message="Do you want to save changes to " + self.filename + "?")
-                    if answer is not None:
-                        if answer:
-                            self.save_file()
-                            return True
-                        else:
-                            return True
+            try:
+                with open(self.filename,  encoding="utf-8") as f:
+                    if self.textarea.get(1.0, tk.END) == f.read():
+                        return True
                     else:
-                        return False
+                        answer = messagebox.askyesnocancel(title="Notepad", message="Do you want to save changes to " + self.filename + "?")
+                        if answer is not None:
+                            if answer:
+                                self.save_file()
+                                return True
+                            else:
+                                return True
+                        else:
+                            return False
+            except:
+                answer = messagebox.askyesno("Error", "Encoding of selected file is not correct, do you want to exit?")
+                if answer is not False:
+                    exit()
+                else:
+                    return
         else:
             if len(self.textarea.get(1.0, tk.END).strip()) == 0:
                 return True
@@ -222,9 +235,14 @@ class jknotepad:
             file = filedialog.askopenfile(defaultextension=".txt", filetypes=[("All Files", "*.*"), ("Text Files", "*.txt")])
             if file:
                 self.filename = file.name
-                self.master.title(self.filename + " - Notepad")
+                self.master.title(f"{self.filename} - Notepad")
                 self.textarea.delete(1.0, tk.END)
-                self.textarea.insert(tk.END, file.read())
+                #self.textarea.insert(tk.END, file.read())
+                try:
+                    with open(self.filename, "r", encoding="utf-8") as f:
+                        self.textarea.insert(tk.END, f.read())
+                except:
+                    messagebox.showerror("Error", "Encoding of selected file is not correct!")
 
     def save_file(self):
         if self.filename:
@@ -238,7 +256,7 @@ class jknotepad:
         file = filedialog.asksaveasfile(defaultextension=".txt", filetypes=[("All Files", "*.*"), ("Text Files", "*.txt")])
         if file:
             self.filename = file.name
-            with open(self.filename, "w") as f:
+            with open(self.filename, "w", encoding="utf-8") as f:
                 f.write(self.textarea.get(1.0, tk.END))
             self.master.title(self.filename + " - Notepad")
 
@@ -253,5 +271,5 @@ class jknotepad:
     
 
 root = tk.Tk()
-jknotepad = jknotepad(root)
+JK_Notepad = JK_Notepad(root)
 root.mainloop()
