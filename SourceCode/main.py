@@ -2,6 +2,8 @@ import tkinter as tk
 from tkinter import filedialog
 from tkinter import messagebox
 from tkinter import filedialog
+import os, sys
+
 
 class JK_Notepad:
     def __init__(self, master):
@@ -19,7 +21,7 @@ class JK_Notepad:
 
         master.geometry(f'{window_width}x{window_hight}+{int(x)}+{int(y)}')
         master.title("Untitled - JK Notepad")
-        master.iconbitmap("JK.ico")
+        master.iconbitmap(f"{os.path.dirname(sys.argv[0])}\JK.ico")
         
         self.y_scrollbar = tk.Scrollbar(master)
         self.y_scrollbar.pack(side=tk.RIGHT, fill=tk.Y)
@@ -80,7 +82,7 @@ class JK_Notepad:
         
         self.search_popup = tk.Toplevel(self.master)
         self.search_popup.withdraw()
-        self.search_popup.iconbitmap("JK.ico")
+        self.search_popup.iconbitmap(f"{os.path.dirname(sys.argv[0])}\JK.ico")
         self.search_popup.resizable(False, False)
         self.search_popup.geometry(f'{popup_width}x{popup_hight}+{int(xp)}+{int(yp)}')
         self.search_popup.title("Find")
