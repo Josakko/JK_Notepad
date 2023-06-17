@@ -193,11 +193,11 @@ class JK_Notepad:
     def is_saved(self):
         if self.filename is not None:
             try:
-                with open(self.filename,  encoding="utf-8") as f:
+                with open(self.filename, "r", encoding="utf-8") as f:
                     if self.textarea.get(1.0, tk.END) == f.read():
                         return True
                     else:
-                        answer = messagebox.askyesnocancel(title="Notepad", message="Do you want to save changes to " + self.filename + "?")
+                        answer = messagebox.askyesnocancel("Notepad", f"Do you want to save changes to {self.filename}?")
                         if answer is not None:
                             if answer:
                                 self.save_file()
@@ -207,16 +207,17 @@ class JK_Notepad:
                         else:
                             return False
             except:
-                answer = messagebox.askyesno("Error", "Encoding of selected file is not correct, do you want to exit?")
+                answer = messagebox.askyesno("Error", f"File deleted or renamed, do you want to save new copy of {self.filename}?")
                 if answer is not False:
-                    exit()
+                    self.save_file()
+                    return True
                 else:
-                    return
+                    return True
         else:
             if len(self.textarea.get(1.0, tk.END).strip()) == 0:
                 return True
             else:
-                answer = messagebox.askyesnocancel(title="Notepad", message="Do you want to save changes to Untitled?")
+                answer = messagebox.askyesnocancel("Notepad", "Do you want to save changes to Untitled?")
                 if answer is not None:
                     if answer:
                         self.save_as()
@@ -248,7 +249,7 @@ class JK_Notepad:
 
     def save_file(self):
         if self.filename:
-            with open(self.filename, "w") as f:
+            with open(self.filename, "w", encoding="utf-8") as f:
                 f.write(self.textarea.get(1.0, tk.END))
             self.master.title(self.filename + " - Notepad")
         else:
